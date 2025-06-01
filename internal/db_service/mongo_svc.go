@@ -2,6 +2,7 @@ package db_service
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -39,7 +40,25 @@ func NewDbService() *DbService {
 func (db *DbService) connect() {
 	mongoURI := os.Getenv("AMBULANCE_API_MONGODB_URI")
 	if mongoURI == "" {
-		mongoURI = "mongodb://localhost:27017" // default fallback
+		// Build MongoDB URI from individual environment variables
+		mongoHost := os.Getenv("AMBULANCE_API_MONGODB_HOST")
+		if mongoHost == "" {
+			mongoHost = "localhost"
+		}
+
+		mongoPort := os.Getenv("AMBULANCE_API_MONGODB_PORT")
+		if mongoPort == "" {
+			mongoPort = "27017"
+		}
+
+		mongoUser := os.Getenv("AMBULANCE_API_MONGODB_USERNAME")
+		mongoPassword := os.Getenv("AMBULANCE_API_MONGODB_PASSWORD")
+
+		if mongoUser != "" && mongoPassword != "" {
+			mongoURI = fmt.Sprintf("mongodb://%s:%s@%s:%s", mongoUser, mongoPassword, mongoHost, mongoPort)
+		} else {
+			mongoURI = fmt.Sprintf("mongodb://%s:%s", mongoHost, mongoPort)
+		}
 	}
 
 	databaseName := os.Getenv("AMBULANCE_API_MONGODB_DATABASE")
