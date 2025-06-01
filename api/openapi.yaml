@@ -1,0 +1,390 @@
+openapi: 3.0.0
+info:
+  title: Hospital Space Management API
+  description: Simple API for managing hospital spaces with CRUD operations
+  version: 1.0.0
+  contact:
+    name: Roman Osadsky
+    url: https://github.com/rosadsky
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+components:
+  schemas:
+    Space:
+      type: object
+      required:
+        - name
+        - type
+        - floor
+        - capacity
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the space
+        name:
+          type: string
+          description: Name of the space
+        type:
+          type: string
+          description: Type of space (e.g., "operating_room", "ward", "emergency_room")
+        floor:
+          type: integer
+          description: Floor number where the space is located
+        capacity:
+          type: integer
+          description: Maximum capacity of the space
+        status:
+          type: string
+          enum: [available, occupied, maintenance]
+          description: Current status of the space
+        assigned_to:
+          type: string
+          description: Name of assigned ambulance or department
+          nullable: true
+        assigned_type:
+          type: string
+          enum: [ambulance, department]
+          description: Type of assignment
+          nullable: true
+        assigned_id:
+          type: string
+          format: uuid
+          description: ID of assigned ambulance or department
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Ambulance:
+      type: object
+      required:
+        - name
+        - type
+        - location
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the ambulance
+        name:
+          type: string
+          description: Name of the ambulance
+        type:
+          type: string
+          description: Type of ambulance (e.g., "basic", "advanced")
+        location:
+          type: string
+          description: Current location of the ambulance
+        status:
+          type: string
+          enum: [available, busy, maintenance]
+          description: Current status of the ambulance
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+paths:
+  /api/spaces:
+    post:
+      summary: Create a new hospital space
+      operationId: createSpace
+      tags:
+        - Spaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - floor
+                - capacity
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                floor:
+                  type: integer
+                capacity:
+                  type: integer
+      responses:
+        '201':
+          description: Space created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '400':
+          description: Invalid request
+    get:
+      summary: List all hospital spaces
+      operationId: listSpaces
+      tags:
+        - Spaces
+      responses:
+        '200':
+          description: List of all spaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Space'
+
+  /api/spaces/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      summary: Update space assignment
+      operationId: updateSpace
+      tags:
+        - Spaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assigned_to:
+                  type: string
+                  description: Name of ambulance or department to assign
+                assigned_type:
+                  type: string
+                  enum: [ambulance, department]
+                  description: Type of assignment
+                assigned_id:
+                  type: string
+                  format: uuid
+                  description: ID of ambulance or department to assign
+      responses:
+        '200':
+          description: Space updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '400':
+          description: Invalid request
+        '404':
+          description: Space not found
+    delete:
+      summary: Delete a hospital space
+      operationId: deleteSpace
+      tags:
+        - Spaces
+      responses:
+        '204':
+          description: Space deleted successfully
+        '404':
+          description: Space not found
+
+  /api/ambulances:
+    post:
+      summary: Create a new ambulance
+      operationId: createAmbulance
+      tags:
+        - Ambulances
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - type
+                - location
+              properties:
+                name:
+                  type: string
+                type:
+                  type: string
+                location:
+                  type: string
+      responses:
+        '201':
+          description: Ambulance created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ambulance'
+        '400':
+          description: Invalid request
+    get:
+      summary: List all ambulances
+      operationId: listAmbulances
+      tags:
+        - Ambulances
+      responses:
+        '200':
+          description: List of ambulances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ambulance'
+
+  /api/ambulances/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get ambulance by ID
+      operationId: getAmbulance
+      responses:
+        '200':
+          description: Ambulance details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ambulance'
+        '404':
+          description: Ambulance not found
+
+  /api/ambulances/{id}/location:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      summary: Update ambulance location
+      operationId: updateAmbulanceLocation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          description: Location updated successfully
+        '404':
+          description: Ambulance not found
+
+  /api/emergencies:
+    post:
+      summary: Create a new emergency
+      operationId: createEmergency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - location
+                - description
+              properties:
+                type:
+                  type: string
+                location:
+                  $ref: '#/components/schemas/Location'
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Emergency created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emergency'
+        '400':
+          description: Invalid request
+    get:
+      summary: List all emergencies
+      operationId: listEmergencies
+      responses:
+        '200':
+          description: List of emergencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Emergency'
+
+  /api/emergencies/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Get emergency by ID
+      operationId: getEmergency
+      responses:
+        '200':
+          description: Emergency details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emergency'
+        '404':
+          description: Emergency not found
+
+  /api/emergencies/{id}/dispatch:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      summary: Dispatch ambulance to emergency
+      operationId: dispatchAmbulance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ambulance_id
+              properties:
+                ambulance_id:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Ambulance dispatched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dispatch'
+        '400':
+          description: Invalid request
+        '404':
+          description: Emergency or ambulance not found
+        '409':
+          description: Ambulance is not available 
