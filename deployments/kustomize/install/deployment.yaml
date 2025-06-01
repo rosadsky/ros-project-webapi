@@ -31,10 +31,6 @@ spec:
               value: mongodb
             - name: AMBULANCE_API_MONGODB_PORT
               value: "27017"
-            - name: AMBULANCE_API_MONGODB_USERNAME
-              value: ""
-            - name: AMBULANCE_API_MONGODB_PASSWORD
-              value: ""
             - name: AMBULANCE_API_MONGODB_DATABASE
               valueFrom:
                 configMapKeyRef:
@@ -70,10 +66,6 @@ spec:
               value: mongodb
             - name: AMBULANCE_API_MONGODB_PORT
               value: "27017"
-            - name: AMBULANCE_API_MONGODB_USERNAME
-              value: ""
-            - name: AMBULANCE_API_MONGODB_PASSWORD
-              value: ""
             - name: AMBULANCE_API_MONGODB_DATABASE
               valueFrom:
                 configMapKeyRef:
@@ -86,8 +78,6 @@ spec:
                   key: collection
             - name: AMBULANCE_API_MONGODB_TIMEOUT_SECONDS
               value: "5"
-            - name: AMBULANCE_API_MONGODB_URI
-              value: "mongodb://mongodb:27017"
           resources:
             requests:
               memory: "64Mi"

@@ -54,7 +54,9 @@ func (db *DbService) connect() {
 		mongoUser := os.Getenv("AMBULANCE_API_MONGODB_USERNAME")
 		mongoPassword := os.Getenv("AMBULANCE_API_MONGODB_PASSWORD")
 
+		// Log credential status for debugging (without exposing actual credentials)
 		if mongoUser != "" && mongoPassword != "" {
+			log.Printf("Using MongoDB authentication with username: %s", mongoUser)
 			mongoURI = fmt.Sprintf("mongodb://%s:%s@%s:%s", mongoUser, mongoPassword, mongoHost, mongoPort)
 		} else {
 			mongoURI = fmt.Sprintf("mongodb://%s:%s", mongoHost, mongoPort)
@@ -67,6 +69,7 @@ func (db *DbService) connect() {
 	}
 
 	log.Printf("Connecting to MongoDB at %s", mongoURI)
+	log.Printf("Database: %s", databaseName)
 
 	clientOptions := options.Client().ApplyURI(mongoURI)
 	client, err := mongo.Connect(context.Background(), clientOptions)
