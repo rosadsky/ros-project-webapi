@@ -37,7 +37,7 @@ spec:
               value: ""
             - name: AMBULANCE_API_MONGODB_DATABASE
               valueFrom:
-                configMapKeyRef:  
+                configMapKeyRef:
                   name: ros-project-webapi-config
                   key: database
             - name: AMBULANCE_API_MONGODB_COLLECTION

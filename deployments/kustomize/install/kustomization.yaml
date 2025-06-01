@@ -14,7 +14,7 @@ configMapGenerator:
       - database=ros-ambulance
       - collection=hospital-spaces
 patches:
-  - path: webapi.deployment.yaml
+  - path: patches/webapi.deployment.yaml
     target:
       group: apps
       version: v1
