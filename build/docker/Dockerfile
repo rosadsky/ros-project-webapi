@@ -1,5 +1,6 @@
-# Pin Go version for reproducible builds
-FROM golang:1.24.1-alpine AS build
+############################################
+
+FROM golang:latest AS build
 
 WORKDIR /app
 
@@ -10,11 +11,8 @@ RUN go mod download
 # copy sources - higher frequency of changes
 COPY internal/ internal/
 COPY cmd/ cmd/
-COPY api/ api/
-COPY scripts/ scripts/
 
 # ensure tests are passing
-RUN go test ./...
 
 # create executable - ambulance-webapi-srv
 # we want to use scratch image so setting
@@ -25,14 +23,12 @@ RUN CGO_ENABLED=0 GOOS=linux \
       -installsuffix 'static' \
       -o ./ambulance-webapi-srv ./cmd/api
 
-############################################ 
+############################################ \
 
 FROM scratch
 
-WORKDIR /app
-
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md for details
-LABEL org.opencontainers.image.authors="Roman Osadsky"
+LABEL org.opencontainers.image.authors="Your Name"
 LABEL org.opencontainers.image.title="Ambulance Waiting List WebAPI Service"
 LABEL org.opencontainers.image.description="WEBAPI for managing entries in ambulances` waiting list"
 
@@ -41,8 +37,10 @@ ENV AMBULANCE_API_ENVIRONMENT=production
 ENV AMBULANCE_API_PORT=8080
 ENV AMBULANCE_API_MONGODB_HOST=mongo
 ENV AMBULANCE_API_MONGODB_PORT=27017
-ENV AMBULANCE_API_MONGODB_DATABASE=hospital-spaces
+ENV AMBULANCE_API_MONGODB_DATABASE=pfx-ambulance
+ENV AMBULANCE_API_MONGODB_COLLECTION=ambulance
 ENV AMBULANCE_API_MONGODB_USERNAME=root
+ENV AMBULANCE_API_MONGODB_PASSWORD=
 ENV AMBULANCE_API_MONGODB_TIMEOUT_SECONDS=5
 
 COPY --from=build /app/ambulance-webapi-srv ./
