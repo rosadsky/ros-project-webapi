@@ -24,7 +24,7 @@ jobs:
       with:
         go-version: ${{ steps.get_go_version.outputs.go_version }}
     - name: Build
-      run: go build -v ./cmd/api
+      run: go build -v -o api-server ./cmd/api
 
       
     - name: Docker Setup QEMU
