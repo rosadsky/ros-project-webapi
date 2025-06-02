@@ -11,6 +11,7 @@ RUN go mod download
 # copy sources - higher frequency of changes
 COPY internal/ internal/
 COPY cmd/ cmd/
+COPY docs/ docs/
 
 # ensure tests are passing
 
