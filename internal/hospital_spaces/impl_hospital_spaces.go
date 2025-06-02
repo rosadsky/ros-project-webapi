@@ -31,6 +31,16 @@ func NewSpaceServiceImpl(dbService *db_service.DbService) *SpaceServiceImpl {
 }
 
 // CreateSpace creates a new hospital space
+// @Summary Create a new hospital space
+// @Description Create a new hospital space with the specified details
+// @Tags Spaces
+// @Accept json
+// @Produce json
+// @Param space body SpaceCreateRequest true "Space creation details"
+// @Success 201 {object} Space "Space created successfully"
+// @Failure 400 {object} map[string]string "Bad request - invalid input"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/spaces [post]
 func (s *SpaceServiceImpl) CreateSpace(c *gin.Context) {
 	var request SpaceCreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -54,6 +64,14 @@ func (s *SpaceServiceImpl) CreateSpace(c *gin.Context) {
 }
 
 // GetSpaces retrieves all hospital spaces
+// @Summary Get all hospital spaces
+// @Description Retrieve a list of all hospital spaces with their current status and assignments
+// @Tags Spaces
+// @Accept json
+// @Produce json
+// @Success 200 {array} Space "List of hospital spaces"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/spaces [get]
 func (s *SpaceServiceImpl) GetSpaces(c *gin.Context) {
 	collection := s.dbService.GetCollection(collectionSpaces)
 	ctx, cancel := s.dbService.CreateContext()
@@ -80,6 +98,18 @@ func (s *SpaceServiceImpl) GetSpaces(c *gin.Context) {
 }
 
 // UpdateSpace updates a hospital space assignment
+// @Summary Update a hospital space
+// @Description Update space assignment details such as assigned entity, type, and ID
+// @Tags Spaces
+// @Accept json
+// @Produce json
+// @Param id path string true "The unique space ID (UUID format)" format(uuid)
+// @Param space body SpaceUpdateRequest true "Space update details"
+// @Success 200 {object} Space "Space updated successfully"
+// @Failure 400 {object} map[string]string "Bad request - invalid space ID or input"
+// @Failure 404 {object} map[string]string "Space not found"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/spaces/{id} [put]
 func (s *SpaceServiceImpl) UpdateSpace(c *gin.Context) {
 	spaceIDStr := c.Param("id")
 	// Validate that it's a valid UUID format
@@ -135,6 +165,17 @@ func (s *SpaceServiceImpl) UpdateSpace(c *gin.Context) {
 }
 
 // DeleteSpace deletes a hospital space
+// @Summary Delete a hospital space
+// @Description Remove a hospital space from the system
+// @Tags Spaces
+// @Accept json
+// @Produce json
+// @Param id path string true "The unique space ID (UUID format)" format(uuid)
+// @Success 204 "Space deleted successfully"
+// @Failure 400 {object} map[string]string "Bad request - invalid space ID"
+// @Failure 404 {object} map[string]string "Space not found"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/spaces/{id} [delete]
 func (s *SpaceServiceImpl) DeleteSpace(c *gin.Context) {
 	spaceIDStr := c.Param("id")
 	// Validate that it's a valid UUID format
@@ -163,6 +204,16 @@ func (s *SpaceServiceImpl) DeleteSpace(c *gin.Context) {
 }
 
 // CreateAmbulance creates a new ambulance
+// @Summary Create a new ambulance
+// @Description Register a new ambulance in the system
+// @Tags Ambulances
+// @Accept json
+// @Produce json
+// @Param ambulance body AmbulanceCreateRequest true "Ambulance creation details"
+// @Success 201 {object} Ambulance "Ambulance created successfully"
+// @Failure 400 {object} map[string]string "Bad request - invalid input"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/ambulances [post]
 func (s *SpaceServiceImpl) CreateAmbulance(c *gin.Context) {
 	var request AmbulanceCreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -186,6 +237,14 @@ func (s *SpaceServiceImpl) CreateAmbulance(c *gin.Context) {
 }
 
 // GetAmbulances retrieves all ambulances
+// @Summary Get all ambulances
+// @Description Retrieve a list of all ambulances in the system
+// @Tags Ambulances
+// @Accept json
+// @Produce json
+// @Success 200 {array} Ambulance "List of ambulances"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/ambulances [get]
 func (s *SpaceServiceImpl) GetAmbulances(c *gin.Context) {
 	collection := s.dbService.GetCollection(collectionAmbulances)
 	ctx, cancel := s.dbService.CreateContext()

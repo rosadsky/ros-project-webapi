@@ -1,0 +1,17 @@
+.openapi-generator-ignore
+Dockerfile
+api/openapi.yaml
+go.mod
+internal/ros-project/README.md
+internal/ros-project/api_ambulances.go
+internal/ros-project/api_health.go
+internal/ros-project/api_spaces.go
+internal/ros-project/model_ambulance.go
+internal/ros-project/model_ambulance_create_request.go
+internal/ros-project/model_error.go
+internal/ros-project/model_get_health_200_response.go
+internal/ros-project/model_space.go
+internal/ros-project/model_space_create_request.go
+internal/ros-project/model_space_update_request.go
+internal/ros-project/routers.go
+main.go

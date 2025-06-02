@@ -1,0 +1,313 @@
+basePath: /
+definitions:
+  hospital_spaces.Ambulance:
+    properties:
+      ambulance_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - location
+    - name
+    - type
+    type: object
+  hospital_spaces.AmbulanceCreateRequest:
+    properties:
+      location:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    required:
+    - location
+    - name
+    - type
+    type: object
+  hospital_spaces.Space:
+    properties:
+      assigned_id:
+        type: string
+      assigned_to:
+        type: string
+      assigned_type:
+        type: string
+      capacity:
+        type: integer
+      created_at:
+        type: string
+      floor:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      space_id:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - capacity
+    - floor
+    - name
+    - type
+    type: object
+  hospital_spaces.SpaceCreateRequest:
+    properties:
+      capacity:
+        type: integer
+      floor:
+        type: integer
+      name:
+        type: string
+      type:
+        type: string
+    required:
+    - capacity
+    - floor
+    - name
+    - type
+    type: object
+  hospital_spaces.SpaceUpdateRequest:
+    properties:
+      assigned_id:
+        type: string
+      assigned_to:
+        type: string
+      assigned_type:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: ROS Project Backend
+    url: https://github.com/rosadsky/ros-project-backend
+  description: |-
+    RESTful API for managing hospital spaces and ambulances. This service provides comprehensive management of hospital room assignments, space allocation, and ambulance tracking.
+
+    ## Features
+    - Hospital space management (CRUD operations)
+    - Ambulance management
+    - Space assignment and status tracking
+    - Health monitoring
+  license:
+    name: MIT
+  title: Hospital Spaces API
+  version: 1.0.0
+paths:
+  /api/ambulances:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all ambulances in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of ambulances
+          schema:
+            items:
+              $ref: '#/definitions/hospital_spaces.Ambulance'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all ambulances
+      tags:
+      - Ambulances
+    post:
+      consumes:
+      - application/json
+      description: Register a new ambulance in the system
+      parameters:
+      - description: Ambulance creation details
+        in: body
+        name: ambulance
+        required: true
+        schema:
+          $ref: '#/definitions/hospital_spaces.AmbulanceCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Ambulance created successfully
+          schema:
+            $ref: '#/definitions/hospital_spaces.Ambulance'
+        "400":
+          description: Bad request - invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new ambulance
+      tags:
+      - Ambulances
+  /api/spaces:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all hospital spaces with their current status
+        and assignments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of hospital spaces
+          schema:
+            items:
+              $ref: '#/definitions/hospital_spaces.Space'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all hospital spaces
+      tags:
+      - Spaces
+    post:
+      consumes:
+      - application/json
+      description: Create a new hospital space with the specified details
+      parameters:
+      - description: Space creation details
+        in: body
+        name: space
+        required: true
+        schema:
+          $ref: '#/definitions/hospital_spaces.SpaceCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Space created successfully
+          schema:
+            $ref: '#/definitions/hospital_spaces.Space'
+        "400":
+          description: Bad request - invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new hospital space
+      tags:
+      - Spaces
+  /api/spaces/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a hospital space from the system
+      parameters:
+      - description: The unique space ID (UUID format)
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Space deleted successfully
+        "400":
+          description: Bad request - invalid space ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Space not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a hospital space
+      tags:
+      - Spaces
+    put:
+      consumes:
+      - application/json
+      description: Update space assignment details such as assigned entity, type,
+        and ID
+      parameters:
+      - description: The unique space ID (UUID format)
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Space update details
+        in: body
+        name: space
+        required: true
+        schema:
+          $ref: '#/definitions/hospital_spaces.SpaceUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Space updated successfully
+          schema:
+            $ref: '#/definitions/hospital_spaces.Space'
+        "400":
+          description: Bad request - invalid space ID or input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Space not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a hospital space
+      tags:
+      - Spaces
+schemes:
+- http
+swagger: "2.0"

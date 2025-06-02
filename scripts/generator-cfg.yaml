@@ -1,0 +1,8 @@
+generatorName: go-gin-server
+outputDir: /local
+inputSpec: /local/api/openapi.yaml
+enablePostProcessFile: true
+additionalProperties:
+  apiPath: internal/ros-project
+  packageName: ros-project
+  interfaceOnly: true

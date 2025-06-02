@@ -1,3 +1,18 @@
+// @title Hospital Spaces API
+// @version 1.0.0
+// @description RESTful API for managing hospital spaces and ambulances. This service provides comprehensive management of hospital room assignments, space allocation, and ambulance tracking.
+// @description
+// @description ## Features
+// @description - Hospital space management (CRUD operations)
+// @description - Ambulance management
+// @description - Space assignment and status tracking
+// @description - Health monitoring
+// @contact.name ROS Project Backend
+// @contact.url https://github.com/rosadsky/ros-project-backend
+// @license.name MIT
+// @host localhost:8080
+// @BasePath /
+// @schemes http
 package main
 
 import (
@@ -14,6 +29,11 @@ import (
 	"github.com/rosadsky/ros-project-backend/internal/db_service"
 	"github.com/rosadsky/ros-project-backend/internal/hospital_spaces"
 	"github.com/rs/zerolog"
+
+	// Swagger imports
+	_ "github.com/rosadsky/ros-project-backend/docs" // Import generated docs
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -69,6 +89,9 @@ func main() {
 	spaceRouter := hospital_spaces.NewSpaceAPIRouter(dbService)
 	spaceRouter.RegisterRoutes(router)
 
+	// Swagger endpoint
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// Get port from environment
 	port := os.Getenv("AMBULANCE_API_PORT")
 	if port == "" {
@@ -84,6 +107,7 @@ func main() {
 	// Start server in a goroutine
 	go func() {
 		logger.Info().Str("port", port).Msg("Starting Hospital Spaces API server")
+		logger.Info().Msg("Swagger UI available at: http://localhost:8080/swagger/index.html")
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Fatal().Err(err).Msg("Failed to start server")
 		}
